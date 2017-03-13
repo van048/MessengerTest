@@ -24,24 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int CS_START_COUNT = 0;
     private static final int SC_SHOW_NUM = 1;
 
-    private Handler mClientHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SC_SHOW_NUM:
-                    if (mTextView != null)
-                        mTextView.setText(String.valueOf(msg.arg1));
-                    return;
-                default:
-                    break;
-            }
-
-            super.handleMessage(msg);
-        }
-    };
     private Messenger mClientMessenger;
     private Messenger mServerMessenger;
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mServerMessenger = new Messenger(service);
@@ -63,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
         mTextView = (TextView) findViewById(R.id.text);
 
-        mClientMessenger = new Messenger(mClientHandler);
+        Handler clientHandler = new ClientHandler();
+        mClientMessenger = new Messenger(clientHandler);
     }
 
     @Override
@@ -111,6 +97,22 @@ public class MainActivity extends AppCompatActivity {
             mServerMessenger.send(message);
         } catch (RemoteException e) {
             e.printStackTrace();
+        }
+    }
+
+    private class ClientHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SC_SHOW_NUM:
+                    if (mTextView != null)
+                        mTextView.setText(String.valueOf(msg.arg1));
+                    return;
+                default:
+                    break;
+            }
+
+            super.handleMessage(msg);
         }
     }
 }

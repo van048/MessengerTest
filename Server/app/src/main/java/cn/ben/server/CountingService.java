@@ -13,11 +13,10 @@ public class CountingService extends Service {
     private static final int CS_START_COUNT = 0;
     private static final int SC_SHOW_NUM = 1;
 
-    private ServerHandler mServerHandler;
     private Messenger mClientMessenger;
-    private Messenger mServerMessenger;
+    private final Messenger mServerMessenger;
 
-    private Thread mCountingThread = new Thread(new Runnable() {
+    private final Thread mCountingThread = new Thread(new Runnable() {
         int i = 0;
 
         @Override
@@ -42,8 +41,8 @@ public class CountingService extends Service {
     private boolean mShouldStopCountingThread;
 
     public CountingService() {
-        mServerHandler = new ServerHandler();
-        mServerMessenger = new Messenger(mServerHandler);
+        ServerHandler serverHandler = new ServerHandler();
+        mServerMessenger = new Messenger(serverHandler);
     }
 
     @Override
