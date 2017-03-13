@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int START_COUNT = 0;
+
     private ClientHandler mClientHandler;
     private Messenger mClientMessenger;
     private Messenger mServerMessenger;
@@ -26,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mServerMessenger = new Messenger(service);
+            askServerToCount();
         }
 
         @Override
@@ -33,6 +37,17 @@ public class MainActivity extends AppCompatActivity {
             mServerMessenger = null;
         }
     };
+
+    private void askServerToCount() {
+        Message message = Message.obtain();
+        message.what = START_COUNT;
+        message.replyTo = mClientMessenger;
+        try {
+            mClientMessenger.send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         unbindService(mServiceConnection);
-        
+
         super.onPause();
     }
 
