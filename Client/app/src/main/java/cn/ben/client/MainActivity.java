@@ -43,6 +43,21 @@ public class MainActivity extends AppCompatActivity {
         mClientMessenger = new Messenger(mClientHandler);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getExplicitIntent(this, new Intent("cn.ben.countingService"));
+        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onPause() {
+        unbindService(mServiceConnection);
+        
+        super.onPause();
+    }
+
     @Nullable
     private Intent getExplicitIntent(@NonNull Context context, @NonNull Intent implicitIntent) {
         PackageManager packageManager = context.getPackageManager();
