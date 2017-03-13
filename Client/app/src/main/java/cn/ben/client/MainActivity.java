@@ -15,14 +15,30 @@ import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int START_COUNT = 0;
+    private static final int CS_START_COUNT = 0;
+    private static final int SC_SHOW_NUM = 1;
 
-    private ClientHandler mClientHandler;
+    private Handler mClientHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SC_SHOW_NUM:
+                    if (mTextView != null)
+                        mTextView.setText(String.valueOf(msg.arg1));
+                    return;
+                default:
+                    break;
+            }
+
+            super.handleMessage(msg);
+        }
+    };
     private Messenger mClientMessenger;
     private Messenger mServerMessenger;
     private ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -38,23 +54,15 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void askServerToCount() {
-        Message message = Message.obtain();
-        message.what = START_COUNT;
-        message.replyTo = mClientMessenger;
-        try {
-            mClientMessenger.send(message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
+    private TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mClientHandler = new ClientHandler();
+        mTextView = (TextView) findViewById(R.id.text);
+
         mClientMessenger = new Messenger(mClientHandler);
     }
 
@@ -79,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         if (packageManager == null) return null;
 
         List<ResolveInfo> resolveInfoList = packageManager.queryIntentServices(implicitIntent, 0);
-        // only have one service matches
+        // make sure it only has one service matched
         if (resolveInfoList == null || resolveInfoList.size() != 1) {
             return null;
         }
@@ -95,10 +103,14 @@ public class MainActivity extends AppCompatActivity {
         return explicitIntent;
     }
 
-    private static class ClientHandler extends Handler{
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+    private void askServerToCount() {
+        Message message = Message.obtain();
+        message.what = CS_START_COUNT;
+        message.replyTo = mClientMessenger;
+        try {
+            mServerMessenger.send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 }
