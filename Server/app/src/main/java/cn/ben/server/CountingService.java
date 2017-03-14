@@ -26,7 +26,8 @@ public class CountingService extends Service {
                 message.what = SC_SHOW_NUM;
                 message.arg1 = i++;
                 try {
-                    mClientMessenger.send(message);
+                    if (mClientMessenger != null)
+                        mClientMessenger.send(message);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -51,9 +52,9 @@ public class CountingService extends Service {
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
+    public void onDestroy() {
         mShouldStopCountingThread = true;
-        return super.onUnbind(intent);
+        super.onDestroy();
     }
 
     private class ServerHandler extends Handler {
