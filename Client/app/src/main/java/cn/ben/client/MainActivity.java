@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         mTextView = (TextView) findViewById(R.id.text);
 
-        Handler clientHandler = new ClientHandler();
+        ClientHandler clientHandler = new ClientHandler();
         mClientMessenger = new Messenger(clientHandler);
     }
 
@@ -57,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         Intent intent = getExplicitIntent(this, new Intent("cn.ben.countingService"));
-        bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+        if (intent != null)
+            bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
     @Override
