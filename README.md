@@ -49,7 +49,7 @@
         return explicitIntent;
     }
 ```
-Assign `mClientMessenger` we created before to `Message.replyTo` when we send message to server at the first time.
+Assign `mClientMessenger` we created before to `Message.replyTo` when we send message to server at the first time. And remember to call `unBind` in an appropriate way.
 ```java
     Message message = Message.obtain();
     message.what = ...;
@@ -60,5 +60,33 @@ Assign `mClientMessenger` we created before to `Message.replyTo` when we send me
         mServerMessenger.send(message);
     } catch (RemoteException e) {
         e.printStackTrace();
+    }
+```
+## Server (Usually A `Service` instance)
+```java
+    private Messenger mClientMessenger;
+    private final Messenger mServerMessenger;
+    
+    public MyService() {
+        // initialize messenger representing server used by client
+        ServerHandler serverHandler = new ServerHandler();
+        mServerMessenger = new Messenger(serverHandler);
+    }
+    
+    mClientMessenger.send(message); // send message to client
+    
+    @Override
+    public IBinder onBind(Intent intent) {
+        // return messenger's binder here
+        return mServerMessenger.getBinder();
+    }
+    
+    private class ServerHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            // get the messenger representing the client here
+            mClientMessenger = msg.replyTo;
+            super.handleMessage(msg);
+        }
     }
 ```
