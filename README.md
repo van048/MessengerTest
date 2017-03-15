@@ -2,19 +2,11 @@
 
 ## Client
 ```java
-    // 1. create Handler
-    ClientHandler clientHandler = new ClientHandler();
-    // 2. create Messenger representing the client used by server
-    mClientMessenger = new Messenger(clientHandler);
-```
-```java
-    private Messenger mClientMessenger;
-    private Messenger mServerMessenger;
+    // 1. define ServiceConnection instance
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mServerMessenger = new Messenger(service);
-            askServerToCount();
+            mServerMessenger = new Messenger(service); // get the Messenger representing the server used by client here
         }
 
         @Override
@@ -22,4 +14,10 @@
             mServerMessenger = null;
         }
     };
+    // 2. create Handler
+    ClientHandler clientHandler = new ClientHandler();
+    // 3. create Messenger representing the client used by server
+    mClientMessenger = new Messenger(clientHandler);
+    // 4. bindService
+    bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
 ```
