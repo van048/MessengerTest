@@ -22,6 +22,7 @@
     ClientHandler clientHandler = new ClientHandler();
     // 3. create Messenger instance representing the client used by server
     mClientMessenger = new Messenger(clientHandler);
+    
     // 4. bindService
     Intent intent = getExplicitIntent(this, new Intent("cn.ben.countingService"));
     bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
