@@ -62,7 +62,7 @@ Assign `mClientMessenger` we created before to `Message.replyTo` when we send me
         e.printStackTrace();
     }
 ```
-## Server (Usually A `Service` instance)
+## Server (Usually A Service instance)
 ```java
     private Messenger mClientMessenger;
     private final Messenger mServerMessenger;
