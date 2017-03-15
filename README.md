@@ -25,7 +25,7 @@
     Intent intent = getExplicitIntent(this, new Intent("cn.ben.countingService"));
     bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
 ```
-**Note**: from Android 5.0 later, the intent used to start a service must be explicit.
+**Note**: From Android 5.0, the `Intent` used to start a `Service` must be explicit.
 ```java
     @Nullable
     private Intent getExplicitIntent(@NonNull Context context, @NonNull Intent implicitIntent) {
@@ -49,7 +49,7 @@
         return explicitIntent;
     }
 ```
-Assign mClientMessenger we created before to Message.replyTo when we send message to server at the first time.
+Assign `mClientMessenger` we created before to `Message.replyTo` when we send message to server at the first time.
 ```java
     Message message = Message.obtain();
     message.what = ...;
