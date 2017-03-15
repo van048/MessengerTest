@@ -16,7 +16,8 @@
             mServerMessenger = null;
         }
     };
-    
+```
+```java 
     // 2. create Handler instance where we handle server's message via overriding handleMessage()
     ClientHandler clientHandler = new ClientHandler();
     // 3. create Messenger instance representing the client used by server
@@ -68,25 +69,25 @@ Assign `mClientMessenger` we created before to `Message.replyTo` when we send me
     private final Messenger mServerMessenger;
     
     public MyService() {
-        // initialize messenger representing server used by client
+        // 1. initialize messenger representing server used by client
         ServerHandler serverHandler = new ServerHandler();
         mServerMessenger = new Messenger(serverHandler);
     }
     
-    mClientMessenger.send(message); // send message to client
-    
     @Override
     public IBinder onBind(Intent intent) {
-        // return messenger's binder here
+        // 2. return messenger's binder here
         return mServerMessenger.getBinder();
     }
     
     private class ServerHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            // get the messenger representing the client here
+            // 3. get the messenger representing the client here
             mClientMessenger = msg.replyTo;
             super.handleMessage(msg);
         }
     }
+    
+    mClientMessenger.send(message); // 4. send message to client
 ```
