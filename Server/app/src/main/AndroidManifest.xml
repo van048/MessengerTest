@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="cn.ben.server">
 
+    <permission android:protectionLevel="normal" android:name="ben.permission.COUNT"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,6 +19,7 @@
         </activity>
 
         <service
+            android:permission="ben.permission.COUNT"
             android:name=".CountingService"
             android:enabled="true"
             android:exported="true">
