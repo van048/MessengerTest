@@ -92,3 +92,25 @@ Assign `mClientMessenger` we created before to `Message.replyTo` when we send me
     
     mClientMessenger.send(message); // 4. send message to client
 ```
+## Permission Stuffs
+- Declare a custom permission at server side's `AndroidManifest.xml` before `<application>` tag
+```java
+    <permission android:protectionLevel="normal" android:name="ben.permission.COUNT"/>
+```
+- Add `android:permission` to attributes of `<service>` tag
+```java
+    <service
+        android:permission="ben.permission.COUNT"
+        android:name=".CountingService"
+        android:enabled="true"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="cn.ben.countingService"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+        </intent-filter>
+    </service>
+```
+- Declare permission usage at client side's `AndroidManifest.xml`
+```java
+   <uses-permission android:name="ben.permission.COUNT"/> 
+```
