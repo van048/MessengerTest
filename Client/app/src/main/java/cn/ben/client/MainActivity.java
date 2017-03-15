@@ -61,13 +61,6 @@ public class MainActivity extends AppCompatActivity {
             bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
     }
 
-    @Override
-    protected void onPause() {
-        unbindService(mServiceConnection);
-
-        super.onPause();
-    }
-
     @Nullable
     private Intent getExplicitIntent(@NonNull Context context, @NonNull Intent implicitIntent) {
         PackageManager packageManager = context.getPackageManager();
@@ -108,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 case SC_SHOW_NUM:
                     if (mTextView != null)
                         mTextView.setText(String.valueOf(msg.arg1));
+                    if (msg.arg1 == 100)
+                        unbindService(mServiceConnection);
                     return;
                 default:
                     break;

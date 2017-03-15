@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.util.Log;
 
 public class CountingService extends Service {
 
@@ -16,12 +17,13 @@ public class CountingService extends Service {
     private Messenger mClientMessenger;
     private final Messenger mServerMessenger;
 
+    // simulating downloading mp3
     private final Thread mCountingThread = new Thread(new Runnable() {
         int i = 0;
 
         @Override
         public void run() {
-            while (!mShouldStopCountingThread) {
+            while (!mShouldStopCountingThread && i <= 100) {
                 Message message = Message.obtain();
                 message.what = SC_SHOW_NUM;
                 message.arg1 = i++;
@@ -57,12 +59,19 @@ public class CountingService extends Service {
         super.onDestroy();
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d("ben", "unbind");
+        return super.onUnbind(intent);
+    }
+
     private class ServerHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case CS_START_COUNT:
                     mClientMessenger = msg.replyTo;
+                    if (mCountingThread.isAlive()) return;
                     mShouldStopCountingThread = false;
                     mCountingThread.start();
                     return;
