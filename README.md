@@ -17,9 +17,9 @@
         }
     };
     
-    // 2. create Handler where we handle server's message via overriding handleMessage()
+    // 2. create Handler instance where we handle server's message via overriding handleMessage()
     ClientHandler clientHandler = new ClientHandler();
-    // 3. create Messenger representing the client used by server
+    // 3. create Messenger instance representing the client used by server
     mClientMessenger = new Messenger(clientHandler);
     // 4. bindService
     Intent intent = getExplicitIntent(this, new Intent("cn.ben.countingService"));
@@ -47,5 +47,18 @@
         Intent explicitIntent = new Intent(implicitIntent);
         explicitIntent.setComponent(componentName);
         return explicitIntent;
+    }
+```
+Assign mClientMessenger we created before to Message.replyTo when we send message to server at the first time.
+```java
+    Message message = Message.obtain();
+    message.what = ...;
+    message.replyTo = mClientMessenger;
+    
+    try {
+        // 5. send message to server
+        mServerMessenger.send(message);
+    } catch (RemoteException e) {
+        e.printStackTrace();
     }
 ```
